@@ -73,14 +73,12 @@ prologue:
 # ----------------------------- Unit Test Linkage ---------------------------- #
 $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
 	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
-	@printf "$(GREEN)Linking $(@F)\n"
-	@printf "=> %s\n" $(^F)
+	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
 
 # ------------------------------ Program Linkage ----------------------------- #
 $(EXEC): $(SRC_OBJS) $(COM_OBJS)
 	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
-	@printf "$(GREEN)Linking $(@F)\n"
-	@printf "=> %s\n" $(^F)
+	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
 
 # ---------------------------- Compile Source Code --------------------------- #
 # Compile .cpp files into .obj files and create .d files to trigger
