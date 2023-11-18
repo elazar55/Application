@@ -49,12 +49,17 @@ class Application
     void Draw()
     {
         window_.clear();
+        for (auto&& i : drawList)
+        {
+            window_.draw(i);
+        }
         window_.display();
     }
     /* ====================================================================== */
-    /*                       Member Variables                                 */
+    /*                          Member Fields                                 */
     /* ====================================================================== */
-    sf::RenderWindow window_;
+    std::vector<sf::Drawable> drawList;
+    sf::RenderWindow          window_;
 };
 /* ========================================================================== */
 /*                                    Tests                                   */
