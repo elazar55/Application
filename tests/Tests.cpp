@@ -1,5 +1,6 @@
 #include "acutest.h"
 #include <iostream>
+#include <memory>
 #include <queue>
 #include <SFML/Graphics.hpp>
 // =============================================================================
@@ -16,6 +17,11 @@ class Application
                     std::string title  = "Title")
     {
         window_.create(sf::VideoMode(width, height), title);
+    }
+    // =========================================================================
+    void AddDrawable(const std::shared_ptr<sf::Drawable> drawable)
+    {
+        draw_list_.push_back(drawable);
     }
     // ================================= Run ===================================
     void Run()
@@ -42,29 +48,35 @@ class Application
     void Draw()
     {
         window_.clear();
-        for (auto&& i : drawList)
+        for (auto&& i : draw_list_)
         {
-            window_.draw(i);
+            window_.draw(*i);
         }
         window_.display();
     }
     // ============================ Member Fields ==============================
-    std::vector<sf::Drawable> drawList;
-    sf::RenderWindow          window_;
+    std::vector<std::shared_ptr<sf::Drawable>> draw_list_;
+    sf::RenderWindow                           window_;
 };
 // =============================================================================
 //                                    Tests
 // =============================================================================
-void KeyboardMapTest()
+void DrawTest()
 {
     Application app;
     app.InitWindow();
+
+    std::shared_ptr<sf::RectangleShape> rect(
+        new sf::RectangleShape(sf::Vector2f(10, 10)));
+
+    app.AddDrawable(rect);
+
     app.Run();
 }
 // =============================================================================
 //                                  Test List
 // =============================================================================
 TEST_LIST = {
-    {"KeyboardMapTest", KeyboardMapTest},
-    { NULL,             NULL           }
+    {"DrawTest", DrawTest},
+    { NULL,      NULL    }
 };
