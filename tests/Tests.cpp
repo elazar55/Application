@@ -19,9 +19,9 @@ class Application
         window_.create(sf::VideoMode(width, height), title);
     }
     // =========================================================================
-    void AddDrawable(const std::shared_ptr<sf::Drawable> drawable)
+    void AddDrawable(std::unique_ptr<sf::Drawable> drawable)
     {
-        draw_list_.push_back(drawable);
+        draw_list_.push_back(std::move(drawable));
     }
     // ================================= Run ===================================
     void Run()
@@ -55,7 +55,7 @@ class Application
         window_.display();
     }
     // ============================ Member Fields ==============================
-    std::vector<std::shared_ptr<sf::Drawable>> draw_list_;
+    std::vector<std::unique_ptr<sf::Drawable>> draw_list_;
     sf::RenderWindow                           window_;
 };
 // =============================================================================
@@ -66,10 +66,7 @@ void DrawTest()
     Application app;
     app.InitWindow();
 
-    std::shared_ptr<sf::RectangleShape> rect(
-        new sf::RectangleShape(sf::Vector2f(10, 10)));
-
-    app.AddDrawable(rect);
+    app.AddDrawable(std::make_unique<sf::RectangleShape>());
 
     app.Run();
 }
