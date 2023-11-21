@@ -1,4 +1,5 @@
 #include "acutest.h"
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <queue>
@@ -32,6 +33,11 @@ class Application
             Draw();
         }
     }
+    // =========================================================================
+    void AddKey(sf::Keyboard::Key key, std::function<void()> func)
+    {
+        key_map_.emplace(key, func);
+    }
   private:
     // ============================= PollEvents ================================
     void PollEvents()
@@ -41,7 +47,13 @@ class Application
         while (window_.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) window_.close();
-            if (event.key.code == sf::Keyboard::Escape) window_.close();
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (key_map_[event.key.code] != nullptr)
+                {
+                    key_map_[event.key.code]();
+                }
+            }
         }
     }
     // ================================ Draw ===================================
@@ -55,8 +67,9 @@ class Application
         window_.display();
     }
     // ============================ Member Fields ==============================
-    std::vector<std::unique_ptr<sf::Drawable>> draw_list_;
-    sf::RenderWindow                           window_;
+    std::vector<std::unique_ptr<sf::Drawable>>         draw_list_;
+    sf::RenderWindow                                   window_;
+    std::map<sf::Keyboard::Key, std::function<void()>> key_map_;
 };
 // =============================================================================
 //                                    Tests
@@ -65,9 +78,13 @@ void DrawTest()
 {
     Application app;
     app.InitWindow();
-
-    app.AddDrawable(std::make_unique<sf::RectangleShape>());
-
+    app.AddDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(10, 10)));
+    app.AddKey(sf::Keyboard::X,
+               [&]()
+               {
+                   app.AddDrawable(std::make_unique<sf::RectangleShape>(
+                       sf::Vector2f(130, 130)));
+               });
     app.Run();
 }
 // =============================================================================
