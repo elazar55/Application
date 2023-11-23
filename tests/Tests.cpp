@@ -12,6 +12,12 @@ class Application
   public:
     // ============================ Constructor ================================
     Application() = default;
+    // ============================= Exit ================================
+    void Exit()
+    {
+        window_.close();
+        std::cout << "Exit successful.\n";
+    }
     // ============================ Init tWindow ===============================
     void InitWindow(int         width  = 800,
                     int         height = 600,
@@ -33,13 +39,13 @@ class Application
             Draw();
         }
     }
-    // =========================================================================
+    // =============================== Add Key =================================
     void AddKey(sf::Keyboard::Key key, std::function<void()> func)
     {
         key_map_.emplace(key, func);
     }
   private:
-    // ============================= PollEvents ================================
+    // ============================ Poll Events ================================
     void PollEvents()
     {
         sf::Event event;
@@ -68,17 +74,17 @@ class Application
     }
     // ============================ Member Fields ==============================
     std::vector<std::unique_ptr<sf::Drawable>>         draw_list_;
-    sf::RenderWindow                                   window_;
     std::map<sf::Keyboard::Key, std::function<void()>> key_map_;
+    sf::RenderWindow                                   window_;
 };
 // =============================================================================
 //                                    Tests
 // =============================================================================
-void DrawTest()
+void AddKeyTest()
 {
     Application app;
     app.InitWindow();
-    app.AddDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(10, 10)));
+    app.AddKey(sf::Keyboard::C, std::bind(&Application::Exit, &app));
     app.AddKey(sf::Keyboard::X,
                [&]()
                {
@@ -88,9 +94,18 @@ void DrawTest()
     app.Run();
 }
 // =============================================================================
+void DrawTest()
+{
+    Application app;
+    app.InitWindow();
+    app.AddDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(10, 10)));
+    app.Run();
+}
+// =============================================================================
 //                                  Test List
 // =============================================================================
 TEST_LIST = {
-    {"DrawTest", DrawTest},
-    { NULL,      NULL    }
+  // { "DrawTest",   DrawTest   },
+    {"AddKeyTest", AddKeyTest},
+    { NULL,        NULL      }
 };
