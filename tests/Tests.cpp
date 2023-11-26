@@ -12,20 +12,23 @@ class Application
   public:
     // ============================ Constructor ================================
     Application() = default;
-    // ============================= Exit ================================
-    void Exit()
-    {
-        window_.close();
-        std::cout << "Exit successful.\n";
-    }
     // ============================ Init tWindow ===============================
     void InitWindow(int         width  = 800,
                     int         height = 600,
                     std::string title  = "Title")
     {
         window_.create(sf::VideoMode(width, height), title);
+        key_map_.emplace(sf::Keyboard::Escape,
+                         std::bind(&sf::RenderWindow::close, &this->window_));
     }
-    // =========================================================================
+    // ============================= Assign Key ================================
+    void SwapKey(sf::Keyboard::Key old_key, sf::Keyboard::Key new_key)
+    {
+        auto func         = key_map_[old_key];
+        key_map_[old_key] = key_map_[new_key];
+        key_map_[new_key] = func;
+    }
+    // ============================ Add Drawable ===============================
     void AddDrawable(std::unique_ptr<sf::Drawable> drawable)
     {
         draw_list_.push_back(std::move(drawable));
@@ -38,11 +41,6 @@ class Application
             PollEvents();
             Draw();
         }
-    }
-    // =============================== Add Key =================================
-    void AddKey(sf::Keyboard::Key key, std::function<void()> func)
-    {
-        key_map_.emplace(key, func);
     }
   private:
     // ============================ Poll Events ================================
@@ -84,13 +82,7 @@ void AddKeyTest()
 {
     Application app;
     app.InitWindow();
-    app.AddKey(sf::Keyboard::C, std::bind(&Application::Exit, &app));
-    app.AddKey(sf::Keyboard::X,
-               [&]()
-               {
-                   app.AddDrawable(std::make_unique<sf::RectangleShape>(
-                       sf::Vector2f(130, 130)));
-               });
+    app.SwapKey(sf::Keyboard::X, sf::Keyboard::Escape);
     app.Run();
 }
 // =============================================================================
