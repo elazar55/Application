@@ -8,7 +8,7 @@ CC       = gcc# Program for compiling C programs; default cc
 # Flags for the C++ compiler
 CXXFLAGS = -g\
            -Wall\
-           -std=c++17\
+           -std=c++20\
            -march=native\
            -fdiagnostics-color=always\
            -fno-diagnostics-show-caret\
