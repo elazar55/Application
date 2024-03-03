@@ -12,7 +12,7 @@ CXXFLAGS = -g\
            -march=native\
            -fdiagnostics-color=always\
            -fno-diagnostics-show-caret\
-           -Icom
+           -I$(COM_DIR)
 
 # Flags for the linker
 LDFLAGS  = -lsfml-system\
@@ -21,7 +21,7 @@ LDFLAGS  = -lsfml-system\
 
 BUILD_DIR = build#                              Build directory
 SRC_DIR   = src#                                Source files directory
-COM_DIR   = com#                                Common files directory
+COM_DIR   = common#                             Common files directory
 TESTS_DIR = tests#                              Test files directory
 SRC_CPP   = $(wildcard $(SRC_DIR)/*.cpp)#       Match all .cpp files in ./src/
 COM_CPP   = $(wildcard $(COM_DIR)/*.cpp)#       Match all .cpp files in ./com/
@@ -72,22 +72,22 @@ prologue:
 
 # ----------------------------- Unit Test Linkage ---------------------------- #
 $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
-	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
+	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 # ------------------------------ Program Linkage ----------------------------- #
 $(EXEC): $(SRC_OBJS) $(COM_OBJS)
-	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
+	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 # ---------------------------- Compile Source Code --------------------------- #
 # Compile .cpp files into .obj files and create .d files to trigger
-# recompilation if headers change
+# recompilation if headers change. Create directory if it doesn't exist.
 # ---------------------------------------------------------------------------- #
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 	@printf "$(YELLOW)Compiling $(<F)\n"
+	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
 # ----------------------------------- Debug ---------------------------------- #
 debug:
