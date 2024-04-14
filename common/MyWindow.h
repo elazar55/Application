@@ -19,7 +19,7 @@ class MyWindow
     // =========================== Private Methods =============================
     void PollEvents();
     void Draw();
-    // ====================== Private Variables ================================
+    // ========================== Private Variables ============================
     std::vector<std::unique_ptr<sf::Drawable>>         draw_list;
     std::map<sf::Keyboard::Key, std::function<void()>> keypress_map;
     sf::RenderWindow                                   sf_window;
