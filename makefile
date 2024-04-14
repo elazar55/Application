@@ -28,7 +28,7 @@ COM_CPP   = $(wildcard $(COM_DIR)/*.cpp)#       Match all .cpp files in ./com/
 TESTS_CPP = $(wildcard $(TESTS_DIR)/*.cpp)#     Match all .cpp files in ./tests/
 VPATH     = $(SRC_DIR):$(COM_DIR):$(TESTS_DIR)# Search path for Prerequisites
 
-# Generate build file list with string substitution
+# Generate files to build by string substitution
 SRC_OBJS   = $(SRC_CPP:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 COM_OBJS   = $(COM_CPP:$(COM_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 TESTS_OBJS = $(TESTS_CPP:$(TESTS_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -54,7 +54,6 @@ CYAN	  = \033[0;36m
 EXEC_BASE = App
 EXEC      = $(BUILD_DIR)/$(EXEC_BASE)$(EXT)
 TEST_EXEC = $(BUILD_DIR)/$(EXEC_BASE)Tests$(EXT)
-
 # ============================================================================ #
 #                                 Build Targets                                #
 # ============================================================================ #
@@ -70,26 +69,26 @@ prologue:
 	@printf "$(CYAN)CXXFLAGS: $(CXXFLAGS)\n"
 	@printf "$(CYAN)LDFLAGS : $(LDFLAGS)\n"
 
-# ----------------------------- Unit Test Linkage ---------------------------- #
+# ============================= Unit Test Linkage ============================ #
 $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
 	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
 	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-# ------------------------------ Program Linkage ----------------------------- #
+# =============================- Program Linkage ============================= #
 $(EXEC): $(SRC_OBJS) $(COM_OBJS)
 	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
 	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-# ---------------------------- Compile Source Code --------------------------- #
+# ============================ Compile Source Code =========================== #
 # Compile .cpp files into .obj files and create .d files to trigger
 # recompilation if headers change. Create directory if it doesn't exist.
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
 	@printf "$(YELLOW)Compiling $(<F)\n"
 	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
-# ----------------------------------- Debug ---------------------------------- #
+# =================================== Debug ================================== #
 debug:
 	@printf "$(BLUE)"
 	@printf "%-10s: $(OS)\n" OS
@@ -104,14 +103,14 @@ debug:
 	@printf "%-10s: $(TESTS_OBJS)\n" TESTS_OBJS
 	@printf "%-10s: $(SRC_DEPS)\n" SRC_DEPS
 
-# ---------------------------------- Utility --------------------------------- #
+# ================================== Utility ================================= #
 clean:
 	rm -rf $(BUILD_DIR)/*
 
-# -------------------------- Generated Dependencies -------------------------- #
+# ========================== Generated Dependencies ========================== #
 # Include .d files. The - in front mutes errors of missing makefiles. At first,
 # all .d files are missing and we don't want those errors to pop up
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 -include $(SRC_DEPS)
 -include $(COM_DEPS)
 -include $(TESTS_DEPS)
